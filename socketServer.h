@@ -9,8 +9,6 @@ namespace lkup69 {
 
 class SocketServer
 {
-        SocketServer(const SocketServer &) = delete;
-        SocketServer &operator=(const SocketServer&) = delete;
 public:        
         template <typename T>
         class Builder
@@ -50,7 +48,10 @@ public:
                 int         m_port = 0;
                 int         m_maxConns = 1;
         };
-
+        
+// Constructor
+        SocketServer(const SocketServer &) = delete;
+        SocketServer &operator=(const SocketServer&) = delete;
 public:
         SocketServer() = default;
         SocketServer(const std::string &addr, int port, int maxConnection)
@@ -59,7 +60,7 @@ public:
         
         virtual ~SocketServer() = default;
 
-public:
+// Interface
         virtual int Init() = 0;
         virtual std::unique_ptr<Socket> Accept(void) = 0;
 };
