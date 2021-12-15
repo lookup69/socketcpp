@@ -24,9 +24,9 @@ public:
                         return *this;
                 }
 
-                Builder &SetPort(const std::string &addr)
+                Builder &SetPort(int port)
                 {
-                        m_addr = addr;
+                        m_port = port;
 
                         return *this;
                 }
@@ -40,7 +40,12 @@ public:
 
                 T Build()
                 {
-                        return T(m_addr, m_port, m_maxConns);
+                        return  T(m_addr, m_port, m_maxConns);
+                }
+
+                T *BuildPtr()
+                {
+                        return new T(m_addr, m_port, m_maxConns);
                 }
 
         private:
@@ -48,19 +53,20 @@ public:
                 int         m_port = 0;
                 int         m_maxConns = 1;
         };
-        
-// Constructor
-        SocketServer(const SocketServer &) = delete;
-        SocketServer &operator=(const SocketServer&) = delete;
+
 public:
         SocketServer() = default;
+        SocketServer(const SocketServer &) = default;
         SocketServer(const std::string &addr, int port, int maxConnection)
         {
         }
         
         virtual ~SocketServer() = default;
 
-// Interface
+        SocketServer &operator=(SocketServer&&) = default;
+        SocketServer &operator=(const SocketServer&) = delete;
+
+public:
         virtual int Init() = 0;
         virtual std::unique_ptr<Socket> Accept(void) = 0;
 };
