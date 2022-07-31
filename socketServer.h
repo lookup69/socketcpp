@@ -1,3 +1,9 @@
+/*
+ *
+ * 2021-05-11
+ *
+ */
+
 #pragma once
 
 #include <string>
@@ -9,8 +15,9 @@ namespace lkup69 {
 
 class SocketServer
 {
+        SocketServer &operator=(const SocketServer&) = delete;
 public:        
-        template <typename T>
+        template <typename SERVER>
         class Builder
         {
         public:
@@ -38,14 +45,14 @@ public:
                         return *this;
                 }
 
-                T Build()
+                SERVER Build()
                 {
-                        return  T(m_addr, m_port, m_maxConns);
+                        return  SERVER(m_addr, m_port, m_maxConns);
                 }
 
-                T *BuildPtr()
+                SERVER *BuildPtr()
                 {
-                        return new T(m_addr, m_port, m_maxConns);
+                        return new SERVER(m_addr, m_port, m_maxConns);
                 }
 
         private:
