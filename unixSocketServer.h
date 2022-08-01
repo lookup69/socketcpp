@@ -64,7 +64,6 @@ public:
                 if ((sd = accept(m_socket, NULL, 0)) == -1)
                         return nullptr;
 
-                //return std::move(std::unique_ptr<Socket>(new SOCKET_TYPE(sd)));
                 return std::move(std::unique_ptr<Socket>(new SOCKET_TYPE(sd)));
         }
 
