@@ -8,7 +8,10 @@
 
 #include <string>
 
+#include <memory>
+
 #include "socket.h"
+#include "unixSocket.h"
 
 namespace lkup69
 {
@@ -40,4 +43,18 @@ protected:
         int m_socket = -1;
 };
 
+class FdCourier
+{
+public:
+        struct FdPack {
+                void  *extraDataPtr  = nullptr;
+                size_t extraDataSize = 0;
+                int    fd            = -1;
+        };
+
+        int  Recv(void *buf, size_t len);
+        int  Send(const void *buf, size_t len, int flags = 0);
+private:
+        std::unique_ptr<UnixSocket> m_socketPtr;        
+};
 }  // namespace lkup69
