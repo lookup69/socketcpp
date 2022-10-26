@@ -22,14 +22,6 @@ public:
         virtual int  GetSocket(void) = 0;
         virtual void Close()         = 0;
 
-        virtual int Bind(const std::string &address)
-        {
-                printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
-                assert(false);
-
-                return -1;
-        }
-
         virtual int Bind(int port)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
@@ -46,7 +38,7 @@ public:
                 return -1;
         }
 
-        virtual int Listen(int maxConnection)
+        virtual int Listen(int maxConnection = 1)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
