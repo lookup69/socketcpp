@@ -30,7 +30,7 @@ public:
                 return -1;
         }
 
-        virtual int Bind(const std::string &address, int port)
+        virtual int Bind(const std::string &address, int port = -1)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);

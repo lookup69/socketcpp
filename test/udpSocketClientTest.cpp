@@ -1,10 +1,10 @@
-#include "../udpSocket.h"
+#include "../UdpSocket.h"
 
 #include <memory>
 
 using namespace lkup69;
 
-// g++ -std=c++17 -o udpSocketClientTest udpSocketClientTest.cpp ../udpSocket.cpp
+// g++ -std=c++17 -o udpSocketClientTest udpSocketClientTest.cpp ../UdpSocket.cpp
 int main(int argc, char *argv[])
 {
         std::unique_ptr<Socket> socketPtr;

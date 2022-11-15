@@ -1,10 +1,10 @@
-#include "../tcpSocket.h"
+#include "../TcpSocket.h"
 
 #include <memory>
 
 using namespace lkup69;
 
-// g++ -std=c++17 -o tcpSocketClientTest tcpSocketClientTest.cpp ../tcpSocket.cpp
+// g++ -std=c++17 -o tcpSocketClientTest tcpSocketClientTest.cpp ../TcpSocket.cpp
 int main(int argc, char *argv[])
 {
         std::unique_ptr<Socket> socketPtr;

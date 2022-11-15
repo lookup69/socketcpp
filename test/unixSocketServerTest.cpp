@@ -1,10 +1,10 @@
-#include "../unixSocket.h"
+#include "../UnixSocket.h"
 
 #include <memory>
 
 using namespace lkup69;
 
-// g++ -std=c++17 -o unixSocketServerTest unixSocketServerTest.cpp ../unixSocket.cpp
+// g++ -std=c++17 -o unixSocketServerTest unixSocketServerTest.cpp ../UnixSocket.cpp
 int main(int argc, char *argv[])
 {
         std::unique_ptr<Socket> socketPtr;

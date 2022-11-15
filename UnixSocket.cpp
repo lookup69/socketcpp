@@ -1,4 +1,4 @@
-#include "unixSocket.h"
+#include "UnixSocket.h"
 
 #include <fcntl.h>
 
@@ -26,7 +26,8 @@ void UnixSocket::Close()
         m_socket = -1;
 }
 
-int UnixSocket::Bind(const std::string &address)
+// port would no used. compatiable with socket interface only
+int UnixSocket::Bind(const std::string &address,int port)
 {
         struct sockaddr_un unaddr = { 0 };
         size_t             len;

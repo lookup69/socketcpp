@@ -1,6 +1,6 @@
 #pragma once
 
-#include "socket.h"
+#include "Socket.h"
 
 #include <unistd.h>
 #include <sys/un.h>
@@ -19,7 +19,8 @@ public:
         int GetSocket() override;
         void Close() override; 
 
-        int Bind(const std::string &address) override;
+        // port would no used. compatiable with socket interface only
+        int Bind(const std::string &address, int port = -1) override;
         int Connect(const std::string &address) override;
         int Listen(int maxConnection) override;
         UnixSocket *Accept() override;

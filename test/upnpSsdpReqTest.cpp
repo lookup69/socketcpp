@@ -1,4 +1,4 @@
-#include "../udpSocket.h"
+#include "../UdpSocket.h"
 
 #include <stdio.h>
 #include <error.h>
@@ -8,7 +8,7 @@
 
 using namespace lkup69;
 
-// g++ -Wall -std=c++17 -o upnpSsdpReqTest upnpSsdpReqTest.cpp ../udpSocket.cpp
+// g++ -Wall -std=c++17 -o upnpSsdpReqTest upnpSsdpReqTest.cpp ../UdpSocket.cpp
 int main(int argc, char *argv[])
 {
         std::unique_ptr<UdpSocket> socketPtr;

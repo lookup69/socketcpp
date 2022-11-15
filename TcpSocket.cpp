@@ -1,4 +1,4 @@
-#include "tcpSocket.h"
+#include "TcpSocket.h"
 
 #include <net/if.h>
 #include <string.h>
