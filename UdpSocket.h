@@ -13,7 +13,7 @@ namespace lkup69
 class UdpSocket : public Socket
 {
 public:
-        UdpSocket(int socket, int domains);
+        explicit UdpSocket(int socket, int domains);
         ~UdpSocket() override;
 
         int  GetSocket() override;

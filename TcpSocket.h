@@ -13,7 +13,7 @@ namespace lkup69
 class TcpSocket : public Socket
 {
 public:
-        TcpSocket(int socket, int domains);
+        explicit TcpSocket(int socket, int domains);
         ~TcpSocket() override;
 
         int     GetSocket() override;

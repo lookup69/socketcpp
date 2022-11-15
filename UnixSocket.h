@@ -13,7 +13,7 @@ class UnixSocket : public Socket
 public:
 
 public:
-        UnixSocket(int socket);
+        explicit UnixSocket(int socket);
         ~UnixSocket() override;
 
         int GetSocket() override;

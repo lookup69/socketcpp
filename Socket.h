@@ -15,11 +15,11 @@ class Socket
         Socket &operator=(const Socket &) = delete;
 
 public:
-        Socket(void)      = default;
+        Socket()      = default;
         virtual ~Socket() = default;
 
 public:
-        virtual int  GetSocket(void) = 0;
+        virtual int  GetSocket() = 0;
         virtual void Close()         = 0;
 
         virtual int Bind(int port)
