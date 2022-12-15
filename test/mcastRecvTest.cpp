@@ -13,8 +13,10 @@ int main(int argc, char *argv[])
 {
         std::unique_ptr<UdpSocket> socketPtr;
 
-        if (argc < 2) {
-                printf("upnpSsdpReqTest address port\n");
+        if (argc < 3) {
+                printf("mcastRecvTest mcast_address port\n");
+                printf("ex:\n");
+                printf("\tmcastRecvTest 239.255.255.250 1900\n");
 
                 return -1;
         }
@@ -40,20 +42,13 @@ int main(int argc, char *argv[])
 
         while (1) {
                 char               buf[4096] = { 0 };
-#if 1                
                 struct sockaddr_in cliaddr   = { 0 };
                 socklen_t          clilen = sizeof(cliaddr);
 
                 memset(&cliaddr, 0, sizeof(cliaddr));
                 socketPtr->Recvfrom(buf, sizeof(buf) - 1, (struct sockaddr *)&cliaddr, &clilen);
-                if((strstr(inet_ntoa(cliaddr.sin_addr), "82.146") == nullptr) && 
-                    (strstr(inet_ntoa(cliaddr.sin_addr), "82.40") == nullptr))
-                        continue;
                 printf("C(%s:%d) ---> S:\n", inet_ntoa(cliaddr.sin_addr), ntohs(cliaddr.sin_port));
 
-#else
-                socketPtr->Read(buf, sizeof(buf));
-#endif               
                 printf("-------------------------------------------\n");
                 printf("%s\n", buf);
 
