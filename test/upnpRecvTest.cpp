@@ -22,8 +22,8 @@ static void show_help()
 int main(int argc, char *argv[])
 {
         std::unique_ptr<UdpSocket> socketPtr;
+        std::string                deviceType;
         std::vector<std::string>   ipFilterVec;
-        std::string                mcastAddress{ "239.255.255.250" };
         int                        port = 1900;
 
         for (int i = 0; argv[i] != nullptr; ++i) {
@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
                         exit(0);
                 } else if ((strcmp(argv[i], "-f") == 0) && (argv[i + 1] != nullptr)) {
                         ipFilterVec.push_back(argv[++i]);
+                } else if ((strcmp(argv[i], "-t") == 0) && (argv[i + 1] != nullptr)) {
+                        deviceType = argv[++i];
                 }
         }
 
@@ -42,11 +44,13 @@ int main(int argc, char *argv[])
                 return -1;
         }
 
-        if (socketPtr->Bind(mcastAddress, port) == 1) {
+
+        if (socketPtr->Bind(port) == 1) {
                 printf("Bind() ... faile\n");
 
                 return -1;
         }
+
 
         while (1) {
                 char               buf[4096] = { 0 };
@@ -62,6 +66,12 @@ int main(int argc, char *argv[])
                                         printf("-------------------------------------------\n");
                                         printf("%s\n", buf);
                                 }
+                        }
+                } else if(deviceType.size() > 0) {
+                        if(strstr(buf, deviceType.c_str())) {
+                                        printf("C(%s:%d) ---> S:\n", inet_ntoa(cliaddr.sin_addr), ntohs(cliaddr.sin_port));
+                                        printf("-------------------------------------------\n");
+                                        printf("%s\n", buf);
                         }
                 } else {
                         printf("C(%s:%d) ---> S:\n", inet_ntoa(cliaddr.sin_addr), ntohs(cliaddr.sin_port));
