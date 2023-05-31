@@ -15,14 +15,14 @@ class Socket
         Socket &operator=(const Socket &) = delete;
 
 public:
-        Socket()      = default;
+        Socket()          = default;
         virtual ~Socket() = default;
 
 public:
         virtual int  GetSocket() = 0;
-        virtual void Close()         = 0;
+        virtual void Close()     = 0;
 
-        virtual int Bind(int port)
+        virtual int Bind([[maybe_unused]] int port)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -30,7 +30,8 @@ public:
                 return -1;
         }
 
-        virtual int Bind(const std::string &address, int port = -1)
+        virtual int Bind([[maybe_unused]] const std::string &address,
+                         [[maybe_unused]] int                port = -1)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -38,7 +39,7 @@ public:
                 return -1;
         }
 
-        virtual int Listen(int maxConnection = 1)
+        virtual int Listen([[maybe_unused]] int maxConnection = 1)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -54,7 +55,7 @@ public:
                 return nullptr;
         }
 
-        virtual int Connect(const std::string &address)
+        virtual int Connect([[maybe_unused]] const std::string &address)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -62,7 +63,8 @@ public:
                 return -1;
         }
 
-        virtual int Connect(const std::string &address, int port)
+        virtual int Connect([[maybe_unused]] const std::string &address,
+                            [[maybe_unused]] int                port)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -70,7 +72,8 @@ public:
                 return -1;
         }
 
-        virtual ssize_t Read(void *buf, size_t len)
+        virtual ssize_t Read([[maybe_unused]] void  *buf,
+                             [[maybe_unused]] size_t len)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -78,7 +81,8 @@ public:
                 return -1;
         }
 
-        virtual ssize_t Write(const void *buf, size_t len)
+        virtual ssize_t Write([[maybe_unused]] const void *buf,
+                              [[maybe_unused]] size_t      len)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -86,7 +90,7 @@ public:
                 return -1;
         }
 
-        virtual ssize_t Write(const std::string &msg)
+        virtual ssize_t Write([[maybe_unused]] const std::string &msg)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -94,7 +98,9 @@ public:
                 return -1;
         }
 
-        virtual ssize_t Send(const void *buf, size_t len, int flags = 0)
+        virtual ssize_t Send([[maybe_unused]] const void *buf,
+                             [[maybe_unused]] size_t      len,
+                             [[maybe_unused]] int         flags = 0)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -102,7 +108,8 @@ public:
                 return -1;
         }
 
-        virtual ssize_t Send(const std::string &msg, int flags = 0)
+        virtual ssize_t Send([[maybe_unused]] const std::string &msg,
+                             [[maybe_unused]] int                flags = 0)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -110,11 +117,11 @@ public:
                 return -1;
         }
 
-        virtual ssize_t SendTo(const void            *buf,
-                               size_t                 len,
-                               const struct sockaddr *destAddr,
-                               socklen_t              addrlen,
-                               int                    flags = 0)
+        virtual ssize_t SendTo([[maybe_unused]] const void            *buf,
+                               [[maybe_unused]] size_t                 len,
+                               [[maybe_unused]] const struct sockaddr *destAddr,
+                               [[maybe_unused]] socklen_t              addrlen,
+                               [[maybe_unused]] int                    flags = 0)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -122,10 +129,10 @@ public:
                 return -1;
         }
 
-        virtual ssize_t SendTo(const std::string     &msg,
-                               const struct sockaddr *destAddr,
-                               socklen_t              addrlen,
-                               int                    flags = 0)
+        virtual ssize_t SendTo([[maybe_unused]] const std::string     &msg,
+                               [[maybe_unused]] const struct sockaddr *destAddr,
+                               [[maybe_unused]] socklen_t              addrlen,
+                               [[maybe_unused]] int                    flags = 0)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -133,7 +140,10 @@ public:
                 return -1;
         }
 
-        virtual ssize_t Recv(void *buf, size_t len, int flags = 0)
+        virtual ssize_t SendTo([[maybe_unused]] const std::string &msg,
+                               [[maybe_unused]] const std::string &destAddr,
+                               [[maybe_unused]] int                port  = 0,
+                               [[maybe_unused]] int                flags = 0)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
@@ -141,11 +151,21 @@ public:
                 return -1;
         }
 
-        virtual ssize_t Recvfrom(void            *buf,
-                                 size_t           len,
-                                 struct sockaddr *srcAddr = nullptr,
-                                 socklen_t       *addrlen = nullptr,
-                                 int              flags   = 0)
+        virtual ssize_t Recv([[maybe_unused]] void  *buf,
+                             [[maybe_unused]] size_t len,
+                             [[maybe_unused]] int    flags = 0)
+        {
+                printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
+                assert(false);
+
+                return -1;
+        }
+
+        virtual ssize_t Recvfrom([[maybe_unused]] void            *buf,
+                                 [[maybe_unused]] size_t           len,
+                                 [[maybe_unused]] struct sockaddr *srcAddr = nullptr,
+                                 [[maybe_unused]] socklen_t       *addrlen = nullptr,
+                                 [[maybe_unused]] int              flags   = 0)
         {
                 printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
                 assert(false);
