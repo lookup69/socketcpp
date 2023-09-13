@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
                 return -1;
         }
 
-        if(socketPtr->Connect(argv[1]) == -1) {
+        if(socketPtr->Connect(argv[1], UnixSocket::ABSTRACT_SOCKET) == -1) {
                 printf("Can not connect to %s\n", argv[1]);
 
                 return -1;

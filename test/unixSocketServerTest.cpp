@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         }
 
         unlink(argv[1]);
-        if (socketPtr->Bind(argv[1]) == -1) {
+        if (socketPtr->Bind(argv[1], UnixSocket::ABSTRACT_SOCKET) == -1) {
                 printf("Socket bind fail\n");
 
                 return -1;

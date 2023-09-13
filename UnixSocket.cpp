@@ -32,18 +32,24 @@ int UnixSocket::Bind(const std::string   &address,
                      [[maybe_unused]] int port)
 {
         struct sockaddr_un unaddr {
-                .sun_family = 0, 
-                .sun_path { 0 }
+                .sun_family = AF_UNIX,
+                .sun_path
+                {
+                        0
+                }
         };
         size_t len;
 
         assert(address.size() > 0);
 
-        unaddr.sun_family = AF_UNIX;
-
         // Abstract Socket Namespace
         len = (address.size() > (sizeof(unaddr.sun_path) - 2)) ? (sizeof(unaddr.sun_path) - 2) : address.size();
-        memcpy(&unaddr.sun_path[1], address.c_str(), len);
+        if (port == ABSTRACT_SOCKET) {
+                memcpy(&unaddr.sun_path[1], address.c_str(), len);
+        } else {
+                unlink(address.c_str());
+                memcpy(unaddr.sun_path, address.c_str(), len);
+        }
 
         return bind(m_socket, (struct sockaddr *)&unaddr, sizeof(struct sockaddr_un));
 }
@@ -63,10 +69,11 @@ UnixSocket *UnixSocket::Accept()
         return new UnixSocket{ sd, m_type };
 }
 
-int UnixSocket::Connect(const std::string &address)
+int UnixSocket::Connect(const std::string &address, int port)
 {
         struct sockaddr_un unaddr {
-                .sun_family = 0, .sun_path
+                .sun_family = 0,
+                .sun_path
                 {
                         0
                 }
@@ -77,7 +84,11 @@ int UnixSocket::Connect(const std::string &address)
 
         unaddr.sun_family = AF_UNIX;
         len               = (address.size() > (sizeof(unaddr.sun_path) - 2)) ? (sizeof(unaddr.sun_path) - 2) : address.size();
-        memcpy(&unaddr.sun_path[1], address.c_str(), len);
+
+        if (port == ABSTRACT_SOCKET) 
+                memcpy(&unaddr.sun_path[1], address.c_str(), len);
+        else 
+                memcpy(unaddr.sun_path, address.c_str(), len);
 
         if (connect(m_socket, (struct sockaddr *)&unaddr, sizeof(struct sockaddr_un)) == -1)
                 return -1;
@@ -120,15 +131,21 @@ ssize_t UnixSocket::SendTo(const std::string   &msg,
                            [[maybe_unused]] int flags)
 {
         struct sockaddr_un unaddr {
-                .sun_family = 0, 
-                .sun_path { 0 }
+                .sun_family = AF_UNIX,
+                .sun_path
+                {
+                        0
+                }
         };
 
-        unaddr.sun_family = AF_UNIX;
+        int len = (destAddr.size() > (sizeof(unaddr.sun_path) - 2)) ? (sizeof(unaddr.sun_path) - 2) : destAddr.size();
 
-        strncpy(&unaddr.sun_path[1], destAddr.c_str(), sizeof(unaddr.sun_path));
+        if (port == ABSTRACT_SOCKET)
+                memcpy(&unaddr.sun_path[1], destAddr.c_str(), len);
+        else
+                memcpy(unaddr.sun_path, destAddr.c_str(), len);
 
-        return sendto(m_socket, msg.c_str(), msg.size(), 0, (struct sockaddr *)&unaddr, sizeof(struct sockaddr_un));
+        return sendto(m_socket, msg.c_str(), msg.size(), 0, (struct sockaddr *)&unaddr, len);
 }
 
 // static member function
