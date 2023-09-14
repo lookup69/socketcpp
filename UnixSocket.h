@@ -12,6 +12,7 @@ namespace lkup69
 class UnixSocket : public Socket
 {
 public:
+        const static int NORMAL_SOCKET = 0;
         const static int ABSTRACT_SOCKET = 1;        
 public:
         explicit UnixSocket(int socket, int type);
@@ -21,12 +22,9 @@ public:
         void Close() override;
 
         // port would no used. compatiable with socket interface only
-        // port = ABSTRACT_SOCKET
-        int Bind(const std::string &address, int port = -1) override;
+        int Bind(const std::string &address, int port = NORMAL_SOCKET) override;
 
-        // abstract socket
-        // port = ABSTRACT_SOCKET
-        int Connect(const std::string &address, int port = -1) override;
+        int Connect(const std::string &address, int port = NORMAL_SOCKET) override;
         int Listen(int maxConnection) override;
 
         UnixSocket *Accept() override;
@@ -36,10 +34,9 @@ public:
         ssize_t Write(const std::string &msg) override;
 
         ssize_t Recv(void *buf, size_t len, int flags = 0) override;
-        // port = ABSTRACT_SOCKET
         ssize_t SendTo(const std::string &msg,
                        const std::string &destAddr,
-                       int                port  = 0,
+                       int                port  = NORMAL_SOCKET,
                        int                flags = 0) override;
 
         // type: SOCK_STREAM | SOCK_DGRAM
