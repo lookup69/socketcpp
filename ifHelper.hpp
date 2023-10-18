@@ -8,7 +8,6 @@
 #include <tuple>
 #include <vector>
 
-#include <iostream>
 namespace lkup69
 {
 
@@ -50,7 +49,7 @@ private:
         std::tuple<std::string, std::string, std::string, std::string> m_if;
 };
 
-class IfHelper
+class IfHelper final
 {
 public:
         IfHelper()                        = default;
