@@ -17,7 +17,7 @@
 
 #include <memory>
 
-#include "ifHelper.hpp"
+#include "IfaceHelper.hpp"
 
 using namespace lkup69;
 using namespace std;
@@ -38,20 +38,20 @@ struct IfAddrsRAII {
         void operator=(const IfAddrsRAII &&) = delete;
 };
 
-int IfHelper::GetIfInfo(vector<IfInfo> &ifV)
+int IfaceHelper::GetIfaceInfo(vector<IfaceInfo> &ifV)
 {
-        IfAddrsRAII     ifaddr;
+        IfAddrsRAII     ifaddrRaii;
         struct ifaddrs *ifa;
         int             sockfd;
 
-        if (getifaddrs(&ifaddr.ifaddr) == -1)
+        if (getifaddrs(&ifaddrRaii.ifaddr) == -1)
                 return -1;
 
         sockfd = socket(AF_INET, SOCK_DGRAM, 0);
         if (sockfd == -1)
-                return 1;
+                return -1;
 
-        for (ifa = ifaddr.ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+        for (ifa = ifaddrRaii.ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
                 if (ifa->ifa_addr != nullptr) {
                         int family = ifa->ifa_addr->sa_family;
 
@@ -81,7 +81,7 @@ int IfHelper::GetIfInfo(vector<IfInfo> &ifV)
                                         snprintf(mac_str, sizeof(mac_str), "%02X:%02X:%02X:%02X:%02X:%02X", mac->ether_addr_octet[0], mac->ether_addr_octet[1], mac->ether_addr_octet[2], mac->ether_addr_octet[3], mac->ether_addr_octet[4], mac->ether_addr_octet[5]);
                                 }
 
-                                ifV.emplace_back(IfInfo{ ifa->ifa_name, ip_str, netmask_str, (mac_str[0] != 0) ? mac_str : string{} });
+                                ifV.emplace_back(IfaceInfo{ ifa->ifa_name, ip_str, netmask_str, (mac_str[0] != 0) ? mac_str : string{} });
                         }
                 }
         }
@@ -91,14 +91,14 @@ int IfHelper::GetIfInfo(vector<IfInfo> &ifV)
         return 0;
 }
 
-// g++ -std=c++17 -DUNIT_TEST -o ifHelper ifHelper.cpp
+// g++ -std=c++17 -DUNIT_TEST -o IfaceHelper IfaceHelper.cpp
 #ifdef UNIT_TEST
 int main()
 {
-        vector<IfInfo> ifinfoVec;
+        vector<IfaceInfo> IfaceInfoVec;
 
-        if (IfHelper::GetIfInfo(ifinfoVec) == 0) {
-                for (auto &it : ifinfoVec) {
+        if (IfaceHelper::GetIfaceInfo(IfaceInfoVec) == 0) {
+                for (auto &it : IfaceInfoVec) {
                         printf("name:%s\n", it.GetName().c_str());
                         printf("ip  :%s\n", it.GetIp().c_str());
                         printf("mask:%s\n", it.GetMask().c_str());
