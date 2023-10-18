@@ -67,6 +67,7 @@ public:
         void operator=(const IfaceHelper &)  = delete;
         void operator=(const IfaceHelper &&) = delete;
 
-        static int GetIfaceInfo(std::vector<IfaceInfo> &ifaceV);
+        static std::string GetIfaceIpByName(const std::string &name, int s = -1 /*resuse socket*/);
+        static int         GetIfaceInfo(std::vector<IfaceInfo> &ifaceV);
 };
 }  // namespace lkup69
