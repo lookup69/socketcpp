@@ -38,7 +38,7 @@ struct IfAddrsRAII {
         void operator=(const IfAddrsRAII &&) = delete;
 };
 
-string IfaceHelper::GetIfaceIpByName(const string &name, int s /*reuse socket*/)
+string IfaceHelper::GetIfaceMacAddr(const string &name, int s /*reuse socket*/)
 {
         int  sockfd      = s;
         char mac_str[18] = { 0 };
@@ -73,7 +73,7 @@ string IfaceHelper::GetIfaceIpByName(const string &name, int s /*reuse socket*/)
         return (mac_str[0] != 0) ? string{ mac_str } : string{};
 }
 
-int IfaceHelper::GetIfaceInfo(vector<IfaceInfo> &ifaceV)
+int IfaceHelper::GetAllIfaceInfo(vector<IfaceInfo> &ifaceV)
 {
         IfAddrsRAII     ifaddrRaii;
         struct ifaddrs *ifa;
@@ -107,7 +107,7 @@ int IfaceHelper::GetIfaceInfo(vector<IfaceInfo> &ifaceV)
                                         inet_ntop(AF_INET6, &netmask->sin6_addr, netmask_str, sizeof(netmask_str));
                                 }
 
-                                ifaceV.emplace_back(IfaceInfo{ ifa->ifa_name, ip_str, netmask_str, std::move(GetIfaceIpByName(ifa->ifa_name, sockfd)) });
+                                ifaceV.emplace_back(IfaceInfo{ ifa->ifa_name, ip_str, netmask_str, std::move(GetIfaceMacAddr(ifa->ifa_name, sockfd)) });
                         }
                 }
         }
@@ -123,7 +123,7 @@ int main()
 {
         vector<IfaceInfo> IfaceInfoVec;
 
-        if (IfaceHelper::GetIfaceInfo(IfaceInfoVec) == 0) {
+        if (IfaceHelper::GetAllIfaceInfo(IfaceInfoVec) == 0) {
                 for (auto &it : IfaceInfoVec) {
                         printf("name:%s\n", it.GetName().c_str());
                         printf("ip  :%s\n", it.GetIp().c_str());
