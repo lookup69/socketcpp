@@ -3,10 +3,12 @@
  * 2023-10-19
  *
  */
+#pragma once
 
 #include <string>
 #include <tuple>
 #include <vector>
+
 
 namespace lkup69
 {
