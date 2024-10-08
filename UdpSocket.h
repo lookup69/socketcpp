@@ -12,10 +12,16 @@ namespace lkup69
 {
 class UdpSocket : public Socket
 {
-public:
+private:
         explicit UdpSocket(int socket, int domains);
+
+public:
         ~UdpSocket() override;
 
+public:
+        static UdpSocket *CreateSocket(int domain = AF_INET, bool bNonBlocking = false);
+
+public:
         int  GetSocket() override;
         void Close() override;
 
@@ -49,11 +55,9 @@ public:
         int McastJoinGroupByIfIndex(const std::string &mcastAddr,
                                     size_t             ifindex);
         int McastJoinByIfAddress(const std::string &mcastAddr,
-                               const std::string &ifAddr = std::string{});
+                                 const std::string &ifAddr = std::string{});
         int McastSetOutGoingIfByAddress(const std::string &ifAddr);
         int McastSetLoop(int onoff);
-
-        static UdpSocket *CreateSocket(int domain = AF_INET, bool bNonBlocking = false);
 
 private:
         struct sockaddr_in m_inaddr = { 0 };

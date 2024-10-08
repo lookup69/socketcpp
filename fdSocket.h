@@ -19,6 +19,7 @@ class FdSocket : public Socket
 {
         FdSocket(const Socket &)              = delete;
         FdSocket &operator=(const FdSocket &) = delete;
+
 public:
         struct FdData {
                 void  *extraDataPtr  = nullptr;
@@ -30,6 +31,9 @@ public:
         FdSocket(void) = default;
         FdSocket(int s);
         ~FdSocket() override;
+
+public:
+        static FdSocket *CreateSocket(int fd);
 
 public:
         int  GetSocket(void) override;
@@ -52,9 +56,10 @@ public:
                 int    fd            = -1;
         };
 
-        int  Recv(void *buf, size_t len);
-        int  Send(const void *buf, size_t len, int flags = 0);
+        int Recv(void *buf, size_t len);
+        int Send(const void *buf, size_t len, int flags = 0);
+
 private:
-        std::unique_ptr<UnixSocket> m_socketPtr;        
+        std::unique_ptr<UnixSocket> m_socketPtr;
 };
 }  // namespace lkup69

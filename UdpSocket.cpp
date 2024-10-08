@@ -17,6 +17,26 @@ UdpSocket::~UdpSocket()
         Close();
 }
 
+// static member function
+UdpSocket *UdpSocket::CreateSocket(int domain, bool bNonBlocking)
+{
+        int sd;
+        int type = SOCK_DGRAM | SOCK_CLOEXEC;  // when any of the exec-family functions succeed.
+
+        if (bNonBlocking)
+                type = type | SOCK_NONBLOCK;
+
+        if ((sd = socket(domain, type, 0)) == -1)
+                return nullptr;
+
+        const int on = 1;
+        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0) {
+                printf("[%s][%s][%d] setsockopt() ... fail\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
+        }
+
+        return new UdpSocket{ sd, domain };
+}
+
 int UdpSocket::GetSocket()
 {
         return m_socket;
@@ -236,9 +256,9 @@ int UdpSocket::McastSetOutGoingIfByAddress(const std::string &ifAddr)
 int UdpSocket::McastSetLoop(int onoff)
 {
         int level = IPPROTO_IP;
-        int loop  = IP_MULTICAST_LOOP; // IP_MULTICAST_LOOP:  Specifies whether or not a copy of 
-                                       // an outgoing multicast datagram is delivered to the 
-                                       // sending host as long as it is a member of the multicast group.
+        int loop  = IP_MULTICAST_LOOP;  // IP_MULTICAST_LOOP:  Specifies whether or not a copy of
+                                        // an outgoing multicast datagram is delivered to the
+                                        // sending host as long as it is a member of the multicast group.
 
         assert(m_socket != -1);
 
@@ -250,25 +270,4 @@ int UdpSocket::McastSetLoop(int onoff)
         uint8_t flag = onoff;
 
         return setsockopt(m_socket, level, loop, &flag, sizeof(flag));
-}
-
-// static member function
-UdpSocket *UdpSocket::CreateSocket(int domain, bool bNonBlocking)
-{
-        int sd;
-        int type = SOCK_DGRAM | SOCK_CLOEXEC; // when any of the exec-family functions succeed.
-
-
-        if(bNonBlocking)
-                type = type | SOCK_NONBLOCK;
-
-        if ((sd = socket(domain, type , 0)) == -1)
-                return nullptr;
-
-        const int on = 1;
-        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0) {
-                printf("[%s][%s][%d] setsockopt() ... fail\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
-        }
-
-        return new UdpSocket{ sd, domain };
 }

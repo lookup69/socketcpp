@@ -17,6 +17,26 @@ TcpSocket::~TcpSocket()
         Close();
 }
 
+// static member function
+TcpSocket *TcpSocket::CreateSocket(int domain, bool bNonBlocking)
+{
+        int sd;
+        int type = SOCK_STREAM | SOCK_CLOEXEC;  // when any of the exec-family functions succeed.
+
+        if (bNonBlocking)
+                type = type | SOCK_NONBLOCK;
+
+        if ((sd = socket(domain, type, 0)) == -1)
+                return nullptr;
+
+        const int on = 1;
+        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0) {
+                printf("[%s][%s][%d] setsockopt() ... fail\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
+        }
+
+        return new TcpSocket{ sd, domain };
+}
+
 int TcpSocket::GetSocket()
 {
         return m_socket;
@@ -72,16 +92,15 @@ int TcpSocket::Listen(int maxConnection)
 
 Socket *TcpSocket::Accept()
 {
-        int sd = -1;
+        int       sd  = -1;
         socklen_t len = 0;
 
         assert(m_socket != -1);
 
-        sd = accept(m_socket, (struct sockaddr *) &m_cliAddr, &len);
+        sd = accept(m_socket, (struct sockaddr *)&m_cliAddr, &len);
 
-        if(sd < 0)
+        if (sd < 0)
                 return nullptr;
-
 
         return new TcpSocket{ sd, m_domain };
 }
@@ -128,24 +147,4 @@ ssize_t TcpSocket::Write(const std::string &msg)
                 return -1;
 
         return write(m_socket, msg.c_str(), len);
-}
-
-// static member function
-TcpSocket *TcpSocket::CreateSocket(int domain, bool bNonBlocking)
-{
-        int sd;
-        int type = SOCK_STREAM | SOCK_CLOEXEC;  // when any of the exec-family functions succeed.
-
-        if (bNonBlocking)
-                type = type | SOCK_NONBLOCK;
-
-        if ((sd = socket(domain, type, 0)) == -1)
-                return nullptr;
-
-        const int on = 1;
-        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0) {
-                printf("[%s][%s][%d] setsockopt() ... fail\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
-        }
-
-        return new TcpSocket{ sd, domain };
 }

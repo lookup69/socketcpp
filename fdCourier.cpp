@@ -26,7 +26,7 @@ int FdCourier::Recv(FdPack *fdPackPtr, size_t len)
                 .msg_control    = cmsg,
                 .msg_controllen = sizeof(cmsg)
         };
-        int        r            = -1;
+        int r = -1;
 
         if (fdPackPtr->extraDataSize > 0) {
                 io.iov_base = fdPackPtr->extraDataPtr;
@@ -40,7 +40,8 @@ int FdCourier::Recv(FdPack *fdPackPtr, size_t len)
                 return -1;
 
         struct cmsghdr *c = CMSG_FIRSTHDR(&msg);
-        fdPackPtr->fd  = *(int *)CMSG_DATA(c);  // receive file descriptor
+        // fdPackPtr->fd     = *(int *)CMSG_DATA(c);  // receive file descriptor
+        fdPackPtr->fd = *static_cast<int *>(CMSG_DATA(c));  // receive file descriptor
 
         return r;
 }
@@ -66,11 +67,12 @@ int FdCourier::Send(const FdPack *fdPackPtr, size_t len, int flags)
                 io.iov_base = cmsg;
                 io.iov_len  = sizeof(cmsg);
         }
-        struct cmsghdr *c    = CMSG_FIRSTHDR(&msg);
-        c->cmsg_level        = SOL_SOCKET;
-        c->cmsg_type         = SCM_RIGHTS;
-        c->cmsg_len          = CMSG_LEN(sizeof(int));
-        *(int *)CMSG_DATA(c) = fdPackPtr->fd;  // set file descriptor
+        struct cmsghdr *c = CMSG_FIRSTHDR(&msg);
+        c->cmsg_level     = SOL_SOCKET;
+        c->cmsg_type      = SCM_RIGHTS;
+        c->cmsg_len       = CMSG_LEN(sizeof(int));
+        // *(int *)CMSG_DATA(c) = fdPackPtr->fd;  // set file descriptor
+        *static_cast<int *>(CMSG_DATA(c)) = fdPackPtr->fd;  // set file descriptor
 
         return sendmsg(m_socketPtr->GetSocket(), &msg, 0);
 }

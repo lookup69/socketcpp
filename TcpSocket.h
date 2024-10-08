@@ -12,10 +12,16 @@ namespace lkup69
 {
 class TcpSocket : public Socket
 {
-public:
+private:
         explicit TcpSocket(int socket, int domains);
+
+public:
         ~TcpSocket() override;
 
+public:
+        static TcpSocket *CreateSocket(int domain = AF_INET, bool bNonBlocking = false);
+
+public:
         int     GetSocket() override;
         void    Close() override;
         int     Bind(int port) override;
@@ -26,8 +32,6 @@ public:
         ssize_t Read(void *buf, size_t len) override;
         ssize_t Write(const void *buf, size_t len) override;
         ssize_t Write(const std::string &msg) override;
-
-        static TcpSocket *CreateSocket(int domain = AF_INET, bool bNonBlocking = false);
 
 private:
         struct sockaddr_in m_inaddr  = { 0 };
