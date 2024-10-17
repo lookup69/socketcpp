@@ -81,6 +81,14 @@ public:
                 return -1;
         }
 
+        virtual ssize_t Read([[maybe_unused]] std::string &txt)
+        {
+                printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
+                assert(false);
+
+                return -1;
+        }
+
         virtual ssize_t Write([[maybe_unused]] const void *buf,
                               [[maybe_unused]] size_t      len)
         {
@@ -171,6 +179,14 @@ public:
                 assert(false);
 
                 return -1;
+        }
+
+        virtual bool IsConnected(void)
+        {
+                printf("[%s][%s][%d] Not implement yet\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
+                assert(false);
+
+                return false;
         }
 };
 }  // namespace lkup69
