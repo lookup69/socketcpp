@@ -50,11 +50,10 @@ public:
                        socklen_t              addrlen,
                        int                    flags = 0) override;
 
-        int McastJoinGroupByIfName(const std::string &mcastAddr,
-                                   const std::string &ifname);
-        int McastJoinGroupByIfIndex(const std::string &mcastAddr,
-                                    size_t             ifindex);
-        int McastJoinByIfAddress(const std::string &mcastAddr,
+        int McastJoinGroup(const std::string &mcastAddr,
+                           const std::string &ifname = std::string{});
+
+        int McastAddMemberShip(const std::string &mcastAddr,
                                  const std::string &ifAddr = std::string{});
         int McastSetOutGoingIfByAddress(const std::string &ifAddr);
         int McastSetLoop(int onoff);

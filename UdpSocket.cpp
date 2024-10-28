@@ -3,6 +3,7 @@
 #include <net/if.h>
 #include <string.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 using namespace lkup69;
 
@@ -178,8 +179,8 @@ ssize_t UdpSocket::SendTo(const std::string     &msg,
         return sendto(m_socket, msg.c_str(), msg.size(), flags, destAddr, addrlen);
 }
 
-int UdpSocket::McastJoinGroupByIfName(const std::string &mcastAddr,
-                                      const std::string &ifname)
+int UdpSocket::McastJoinGroup(const std::string &mcastAddr,
+                              const std::string &ifname)
 {
         struct sockaddr_in inaddr = { 0 };
         struct group_req   req    = { 0 };
@@ -187,58 +188,45 @@ int UdpSocket::McastJoinGroupByIfName(const std::string &mcastAddr,
 
         assert(m_socket != -1);
 
-        if ((req.gr_interface = if_nametoindex(ifname.c_str())) == 0) {
-                return -1;
-        }
+        if (!ifname.empty())
+                req.gr_interface = if_nametoindex(ifname.c_str());
+        else
+                req.gr_interface = 0;
 
-        inaddr.sin_family = m_domain;
-        if (m_domain == AF_INET)
-                inaddr.sin_addr.s_addr = inet_addr(mcastAddr.c_str());
+        inaddr.sin_family      = m_domain;
+        inaddr.sin_addr.s_addr = inet_addr(mcastAddr.c_str());
 
         memcpy(&req.gr_group, &inaddr, sizeof(inaddr));
 
-        if (m_inaddr.sin_family == AF_INET6)
+        if (m_domain == AF_INET6)
                 level = IPPROTO_IPV6;
 
         return (setsockopt(m_socket, level, MCAST_JOIN_GROUP, &req, sizeof(req)));
 }
 
-int UdpSocket::McastJoinGroupByIfIndex(const std::string &mcastAddr,
-                                       size_t             ifindex = 0)
-{
-        struct sockaddr_in inaddr = { 0 };
-        struct group_req   req    = { 0 };
-        int                level  = IPPROTO_IP;
-
-        assert(m_socket != -1);
-
-        req.gr_interface  = ifindex;
-        inaddr.sin_family = m_domain;
-
-        if (m_domain == AF_INET)
-                inaddr.sin_addr.s_addr = inet_addr(mcastAddr.c_str());
-
-        memcpy(&req.gr_group, &inaddr, sizeof(inaddr));
-
-        if (m_inaddr.sin_family == AF_INET6)
-                level = IPPROTO_IPV6;
-
-        return (setsockopt(m_socket, level, MCAST_JOIN_GROUP, &req, sizeof(req)));
-}
-
-int UdpSocket::McastJoinByIfAddress(const std::string &mcastAddr,
-                                    const std::string &ifAddr)
+int UdpSocket::McastAddMemberShip(const std::string &mcastAddr,
+                              const std::string &ifAddr)
 {
         struct ip_mreq mreq  = { 0 };
         int            level = IPPROTO_IP;
 
         assert(m_socket != -1);
 
-        if (m_inaddr.sin_family == AF_INET6)
-                level = IPPROTO_IPV6;
-
-        mreq.imr_interface.s_addr = inet_addr(ifAddr.c_str());
         mreq.imr_multiaddr.s_addr = inet_addr(mcastAddr.c_str());
+        if (!ifAddr.empty()) {
+                struct ifreq ifr {
+                        0
+                };
+
+                strncpy(ifr.ifr_name, ifAddr.c_str(), IFNAMSIZ);
+                if (ioctl(m_socket, SIOCGIFADDR, &ifr) < 0)
+                        return -1;
+
+                mreq.imr_interface.s_addr = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr.s_addr;
+        } else {
+                mreq.imr_interface.s_addr = INADDR_ANY;
+        }
+
         return setsockopt(m_socket, level, IP_ADD_MEMBERSHIP, (char *)&mreq, sizeof(mreq));
 }
 

@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <error.h>
+#include <net/if.h>
 
 #include <cstring>
 #include <memory>
@@ -52,11 +53,8 @@ int main(int argc, char *argv[])
                 return -1;
         }
 
-        if (!iface.empty() && (socketPtr->McastJoinGroupByIfName(mcastAddress, iface) == -1)) {
-                printf("McastJoinGroupByIfName:%s\n", strerror(errno));
-                return -1;
-        } else if (socketPtr->McastJoinGroupByIfIndex(mcastAddress, 0) == -1) {
-                printf("McastJoinGroupByIfIndex:%s\n", strerror(errno));
+        if (socketPtr->McastJoinGroup(mcastAddress, iface)) {
+                printf("McastJoinGroup:%s\n", strerror(errno));
 
                 return -1;
         }

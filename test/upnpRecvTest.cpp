@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
         std::unique_ptr<UdpSocket> socketPtr;
         std::string                deviceType;
         std::vector<std::string>   ipFilterVec;
+        std::string                mcastAddress{ "239.255.255.250" };
         int                        port = 1900;
 
         for (int i = 0; argv[i] != nullptr; ++i) {
@@ -43,14 +44,26 @@ int main(int argc, char *argv[])
 
                 return -1;
         }
+#if 1
+        if (socketPtr->McastAddMemberShip(mcastAddress) != 0) {
+                perror("setsockopt");;
 
-
-        if (socketPtr->Bind(port) == 1) {
-                printf("Bind() ... faile\n");
+                return -1;
+        }
+#else
+        if(socketPtr->McastJoinGroup(mcastAddress, "enp100s0") != 0){
+                perror("setsockopt");;
 
                 return -1;
         }
 
+#endif
+        if (socketPtr->Bind(mcastAddress, port) == 1) {
+                // if (socketPtr->Bind(port) == 1) {
+                printf("Bind() ... faile\n");
+
+                return -1;
+        }
 
         while (1) {
                 char               buf[4096] = { 0 };
@@ -67,11 +80,11 @@ int main(int argc, char *argv[])
                                         printf("%s\n", buf);
                                 }
                         }
-                } else if(deviceType.size() > 0) {
-                        if(strstr(buf, deviceType.c_str())) {
-                                        printf("C(%s:%d) ---> S:\n", inet_ntoa(cliaddr.sin_addr), ntohs(cliaddr.sin_port));
-                                        printf("-------------------------------------------\n");
-                                        printf("%s\n", buf);
+                } else if (deviceType.size() > 0) {
+                        if (strstr(buf, deviceType.c_str())) {
+                                printf("C(%s:%d) ---> S:\n", inet_ntoa(cliaddr.sin_addr), ntohs(cliaddr.sin_port));
+                                printf("-------------------------------------------\n");
+                                printf("%s\n", buf);
                         }
                 } else {
                         printf("C(%s:%d) ---> S:\n", inet_ntoa(cliaddr.sin_addr), ntohs(cliaddr.sin_port));
