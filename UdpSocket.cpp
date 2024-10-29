@@ -19,23 +19,19 @@ UdpSocket::~UdpSocket()
 }
 
 // static member function
-UdpSocket *UdpSocket::CreateSocket(int domain, bool bNonBlocking)
+UdpSocket *UdpSocket::CreateSocket(int domain, int flage)
 {
         int sd;
-        int type = SOCK_DGRAM | SOCK_CLOEXEC;  // when any of the exec-family functions succeed.
+        int type = SOCK_DGRAM | flage;  // when any of the exec-family functions succeed.
 
-        if (bNonBlocking)
-                type = type | SOCK_NONBLOCK;
-
-        if ((sd = socket(domain, type, 0)) == -1)
+        if ((sd = socket(domain, type, 0)) == -1) 
                 return nullptr;
 
         const int on = 1;
-        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0) {
-                printf("[%s][%s][%d] setsockopt() ... fail\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
-        }
+        if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0) 
+                return nullptr;
 
-        return new UdpSocket{ sd, domain };
+        return new (std::nothrow) UdpSocket{ sd, domain };
 }
 
 int UdpSocket::GetSocket()
@@ -60,10 +56,7 @@ int UdpSocket::Bind(int port)
         if (m_domain == AF_INET)
                 m_inaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-        if (bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr)) == -1)
-                return -1;
-
-        return 0;
+        return bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr));
 }
 
 int UdpSocket::Bind(const std::string &address, int port)
@@ -73,15 +66,11 @@ int UdpSocket::Bind(const std::string &address, int port)
         m_inaddr.sin_family = m_domain;
         m_inaddr.sin_port   = htons(port);
 
-        if (m_domain == AF_INET) {
+        if (m_domain == AF_INET) 
                 if (inet_aton(address.c_str(), &m_inaddr.sin_addr) == 0)
                         return -1;
-        }
 
-        if (bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr)) == -1)
-                return -1;
-
-        return 0;
+        return bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr));
 }
 
 int UdpSocket::Connect(const std::string &address, int port)
@@ -91,20 +80,17 @@ int UdpSocket::Connect(const std::string &address, int port)
         m_inaddr.sin_family = m_domain;
         m_inaddr.sin_port   = htons(port);
 
-        if (m_domain == AF_INET) {
+        if (m_domain == AF_INET) 
                 if (inet_aton(address.c_str(), &m_inaddr.sin_addr) == 0)
                         return -1;
-        }
 
-        if (connect(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr)) == -1)
-                return -1;
-
-        return 0;
+        return connect(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr));
 }
 
 ssize_t UdpSocket::Read(void *buf, size_t len)
 {
         assert(buf);
+        assert(m_socket != -1);
 
         return read(m_socket, buf, len);
 }
@@ -130,6 +116,7 @@ ssize_t UdpSocket::Recvfrom(void            *buf,
 ssize_t UdpSocket::Write(const void *buf, size_t len)
 {
         assert(buf);
+        assert(m_socket != -1);
 
         return write(m_socket, buf, len);
 }

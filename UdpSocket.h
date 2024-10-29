@@ -19,7 +19,8 @@ public:
         ~UdpSocket() override;
 
 public:
-        static UdpSocket *CreateSocket(int domain = AF_INET, bool bNonBlocking = false);
+        static UdpSocket *CreateSocket(int domain = AF_INET,
+                                       int flags  = SOCK_CLOEXEC | SOCK_NONBLOCK);
 
 public:
         int  GetSocket() override;
@@ -54,7 +55,7 @@ public:
                            const std::string &ifname = std::string{});
 
         int McastAddMemberShip(const std::string &mcastAddr,
-                                 const std::string &ifAddr = std::string{});
+                               const std::string &ifAddr = std::string{});
         int McastSetOutGoingIfByAddress(const std::string &ifAddr);
         int McastSetLoop(int onoff);
 
