@@ -18,13 +18,10 @@ TcpSocket::~TcpSocket()
 }
 
 // static member function
-TcpSocket *TcpSocket::CreateSocket(int domain, bool bNonBlocking)
+TcpSocket *TcpSocket::CreateSocket(int domain, int flage)
 {
         int sd;
-        int type = SOCK_STREAM | SOCK_CLOEXEC;  // when any of the exec-family functions succeed.
-
-        if (bNonBlocking)
-                type = type | SOCK_NONBLOCK;
+        int type = SOCK_STREAM | flage;  // when any of the exec-family functions succeed.
 
         if ((sd = socket(domain, type, 0)) == -1)
                 return nullptr;
@@ -34,7 +31,7 @@ TcpSocket *TcpSocket::CreateSocket(int domain, bool bNonBlocking)
                 printf("[%s][%s][%d] setsockopt() ... fail\n", __FILE__, __PRETTY_FUNCTION__, __LINE__);
         }
 
-        return new TcpSocket{ sd, domain };
+        return new (std::nothrow) TcpSocket{ sd, domain };
 }
 
 int TcpSocket::GetSocket()
@@ -59,10 +56,7 @@ int TcpSocket::Bind(int port)
         if (m_domain == AF_INET)
                 m_inaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-        if (bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr)) == -1)
-                return -1;
-
-        return 0;
+        return bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr));
 }
 
 int TcpSocket::Bind(const std::string &address, int port)
@@ -77,10 +71,7 @@ int TcpSocket::Bind(const std::string &address, int port)
                         return -1;
         }
 
-        if (bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr)) == -1)
-                return -1;
-
-        return 0;
+        return bind(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr));
 }
 
 int TcpSocket::Listen(int maxConnection)
@@ -102,7 +93,7 @@ Socket *TcpSocket::Accept()
         if (sd < 0)
                 return nullptr;
 
-        return new TcpSocket{ sd, m_domain };
+        return new (std::nothrow) TcpSocket{ sd, m_domain };
 }
 
 int TcpSocket::Connect(const std::string &address, int port)
@@ -117,15 +108,13 @@ int TcpSocket::Connect(const std::string &address, int port)
                         return -1;
         }
 
-        if (connect(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr)) == -1)
-                return -1;
-
-        return 0;
+        return connect(m_socket, (struct sockaddr *)&m_inaddr, sizeof(m_inaddr));
 }
 
 ssize_t TcpSocket::Read(void *buf, size_t len)
 {
         assert(buf);
+        assert(m_socket != -1);
 
         return read(m_socket, buf, len);
 }
@@ -133,6 +122,7 @@ ssize_t TcpSocket::Read(void *buf, size_t len)
 ssize_t TcpSocket::Write(const void *buf, size_t len)
 {
         assert(buf);
+        assert(m_socket != -1);
 
         return write(m_socket, buf, len);
 }

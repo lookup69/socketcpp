@@ -20,7 +20,7 @@ public:
 
 public:
         static UdpSocket *CreateSocket(int domain = AF_INET,
-                                       int flags  = SOCK_CLOEXEC | SOCK_NONBLOCK);
+                                       int flags  = SOCK_CLOEXEC); // SOCK_NONBLOCK
 
 public:
         int  GetSocket() override;

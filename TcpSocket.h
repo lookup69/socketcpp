@@ -19,7 +19,8 @@ public:
         ~TcpSocket() override;
 
 public:
-        static TcpSocket *CreateSocket(int domain = AF_INET, bool bNonBlocking = false);
+        static TcpSocket *CreateSocket(int domain = AF_INET,
+                                       int flage  = SOCK_CLOEXEC);  // SOCK_NONBLOCK
 
 public:
         int     GetSocket() override;
